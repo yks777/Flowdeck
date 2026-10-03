@@ -3,7 +3,7 @@ import QtQuick.Layouts
 import qs.Commons
 
 // Settings: replaces the content view, offers a back action. Sections:
-// Focus, Flowtime, Stats, Notifications, Data.
+// Focus, Flowtime, Stats, Notifications, Shortcuts, Data.
 ColumnLayout {
   id: root
 
@@ -12,11 +12,12 @@ ColumnLayout {
 
   property bool confirmingReset: false
 
-  spacing: Style.space(10)
+  spacing: Style.space(12)
   Layout.fillWidth: true
+  padding: Style.space(16)
 
   RowLayout {
-    spacing: Style.space(8)
+    spacing: Style.space(10)
     Layout.fillWidth: true
 
     FlowIconButton {
@@ -38,10 +39,10 @@ ColumnLayout {
   Section {
     title: "Focus"
     ColumnLayout {
-      spacing: Style.space(6)
+      spacing: Style.space(10)
       Layout.fillWidth: true
       RowLayout {
-        spacing: Style.space(4)
+        spacing: Style.space(8)
         Layout.fillWidth: true
         SettingLabel { text: "Technique" }
         Item { Layout.fillWidth: true }
@@ -58,10 +59,10 @@ ColumnLayout {
   Section {
     title: "Flowtime"
     ColumnLayout {
-      spacing: Style.space(6)
+      spacing: Style.space(10)
       Layout.fillWidth: true
       RowLayout {
-        spacing: Style.space(4)
+        spacing: Style.space(8)
         Layout.fillWidth: true
         SettingLabel { text: "Break mode" }
         Item { Layout.fillWidth: true }
@@ -77,7 +78,7 @@ ColumnLayout {
   Section {
     title: "Stats"
     ColumnLayout {
-      spacing: Style.space(6)
+      spacing: Style.space(10)
       Layout.fillWidth: true
       NumberRow { label: "Daily streak minimum"; unit: "min"; value: root.service ? root.service.settings.streakMinSec / 60 : 25; onCommit: function(v) { root.service.updateSettings({ streakMinSec: v * 60 }); } }
     }
@@ -86,7 +87,7 @@ ColumnLayout {
   Section {
     title: "Notifications"
     ColumnLayout {
-      spacing: Style.space(6)
+      spacing: Style.space(10)
       Layout.fillWidth: true
       ToggleRow {
         label: "Enabled"
@@ -104,16 +105,20 @@ ColumnLayout {
   Section {
     title: "Shortcuts"
     ColumnLayout {
-      spacing: Style.space(6)
+      spacing: Style.space(10)
       Layout.fillWidth: true
       RowLayout {
-        spacing: Style.space(4)
+        spacing: Style.space(8)
         Layout.fillWidth: true
         SettingLabel { text: "Open Flowdeck" }
         Item { Layout.fillWidth: true }
         Chip { label: "Off"; active: root.service && root.service.settings.toggleShortcut === ""; onClicked: root.service.updateSettings({ toggleShortcut: "" }) }
         Chip { label: "Super+H"; active: root.service && root.service.settings.toggleShortcut === "super+h"; onClicked: root.service.updateSettings({ toggleShortcut: "super+h" }) }
         Chip { label: "Super+Shift+H"; active: root.service && root.service.settings.toggleShortcut === "super+shift+h"; onClicked: root.service.updateSettings({ toggleShortcut: "super+shift+h" }) }
+      }
+      RowLayout {
+        spacing: Style.space(8)
+        Layout.fillWidth: true
         Chip { label: "Alt+H"; active: root.service && root.service.settings.toggleShortcut === "alt+h"; onClicked: root.service.updateSettings({ toggleShortcut: "alt+h" }) }
         Chip { label: "Ctrl+Shift+H"; active: root.service && root.service.settings.toggleShortcut === "ctrl+shift+h"; onClicked: root.service.updateSettings({ toggleShortcut: "ctrl+shift+h" }) }
       }
@@ -123,7 +128,7 @@ ColumnLayout {
   Section {
     title: "Data"
     ColumnLayout {
-      spacing: Style.space(6)
+      spacing: Style.space(10)
       Layout.fillWidth: true
       Text {
         textFormat: Text.PlainText
@@ -135,7 +140,7 @@ ColumnLayout {
         Layout.fillWidth: true
       }
       RowLayout {
-        spacing: Style.space(6)
+        spacing: Style.space(8)
         Layout.fillWidth: true
         FlowButton { text: "Export"; onClicked: { if (root.service) root.service.exportData(); } }
         FlowButton { text: "Import"; onClicked: { if (root.service) root.service.importData(); } }
@@ -168,8 +173,9 @@ ColumnLayout {
   component Section: ColumnLayout {
     id: sec
     property string title: ""
-    spacing: Style.space(6)
+    spacing: Style.space(8)
     Layout.fillWidth: true
+    padding: Style.space(12)
     Text {
       textFormat: Text.PlainText
       text: sec.title.toUpperCase()
@@ -199,7 +205,7 @@ ColumnLayout {
     property string unit: ""
     property real value: 0
     signal commit(real v)
-    spacing: Style.space(8)
+    spacing: Style.space(10)
     Layout.fillWidth: true
     SettingLabel { text: num.label }
     Text {
@@ -230,7 +236,7 @@ ColumnLayout {
     property string label: ""
     property bool checked: false
     signal toggled(bool v)
-    spacing: Style.space(8)
+    spacing: Style.space(10)
     Layout.fillWidth: true
     SettingLabel { text: tog.label }
     Item { Layout.fillWidth: true }
