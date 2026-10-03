@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import qs.Commons
 import qs.Ui
+import "../logic/Model.js" as Model
 
 // Flowdeck bar widget: a clock that reflects timer state.
 // Left click toggles the panel through the Service (single state owner).
@@ -37,19 +38,13 @@ BarWidget {
     if (root.phase === "running" || root.phase === "paused" || root.phase === "break") {
       if (root.mode === "pomodoro" || root.phase === "break") {
         var rem = Math.max(0, Math.floor(root.flowService.timerRemainingMs() / 1000));
-        parts.push(formatMS(rem));
+        parts.push(Model.formatMS(rem));
       } else if (root.mode === "flowtime") {
         var el = Math.max(0, Math.floor(root.flowService.flowElapsedMs() / 1000));
         parts.push(formatShort(el));
       }
     }
     return parts.length > 0 ? root.clockGlyph + " " + parts.join(" ") : root.clockGlyph;
-  }
-
-  function formatMS(totalSeconds) {
-    var m = Math.floor(totalSeconds / 60);
-    var s = totalSeconds % 60;
-    return (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
   }
 
   function formatShort(totalSeconds) {

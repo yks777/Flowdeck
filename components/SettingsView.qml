@@ -45,8 +45,8 @@ ColumnLayout {
         Layout.fillWidth: true
         SettingLabel { text: "Technique" }
         Item { Layout.fillWidth: true }
-        ModeChip { label: "Pomodoro"; active: root.service && root.service.settings.focusAction === "pomodoro"; onClicked: root.service.updateSettings({ focusAction: "pomodoro" }) }
-        ModeChip { label: "Flowtime"; active: root.service && root.service.settings.focusAction === "flowtime"; onClicked: root.service.updateSettings({ focusAction: "flowtime" }) }
+        Chip { label: "Pomodoro"; active: root.service && root.service.settings.focusAction === "pomodoro"; onClicked: root.service.updateSettings({ focusAction: "pomodoro" }) }
+        Chip { label: "Flowtime"; active: root.service && root.service.settings.focusAction === "flowtime"; onClicked: root.service.updateSettings({ focusAction: "flowtime" }) }
       }
       NumberRow { label: "Focus duration"; unit: "min"; value: root.service ? root.service.settings.focusSec / 60 : 25; onCommit: function(v) { root.service.updateSettings({ focusSec: v * 60 }); } }
       NumberRow { label: "Short break"; unit: "min"; value: root.service ? root.service.settings.shortBreakSec / 60 : 5; onCommit: function(v) { root.service.updateSettings({ shortBreakSec: v * 60 }); } }
@@ -65,8 +65,8 @@ ColumnLayout {
         Layout.fillWidth: true
         SettingLabel { text: "Break mode" }
         Item { Layout.fillWidth: true }
-        ModeChip { label: "Traditional"; active: root.service && root.service.settings.flowBreakMode === "traditional"; onClicked: root.service.updateSettings({ flowBreakMode: "traditional" }) }
-        ModeChip { label: "Proportional"; active: root.service && root.service.settings.flowBreakMode === "proportional"; onClicked: root.service.updateSettings({ flowBreakMode: "proportional" }) }
+        Chip { label: "Traditional"; active: root.service && root.service.settings.flowBreakMode === "traditional"; onClicked: root.service.updateSettings({ flowBreakMode: "traditional" }) }
+        Chip { label: "Proportional"; active: root.service && root.service.settings.flowBreakMode === "proportional"; onClicked: root.service.updateSettings({ flowBreakMode: "proportional" }) }
       }
       NumberRow { label: "Break percentage"; unit: "%"; value: root.service ? Math.round(root.service.settings.flowBreakPct * 100) : 20; onCommit: function(v) { root.service.updateSettings({ flowBreakPct: v / 100 }); } }
       NumberRow { label: "Minimum break"; unit: "min"; value: root.service ? root.service.settings.flowBreakMinSec / 60 : 5; onCommit: function(v) { root.service.updateSettings({ flowBreakMinSec: v * 60 }); } }
@@ -238,34 +238,5 @@ ColumnLayout {
     }
   }
 
-  component ModeChip: Item {
-    id: mc
-    property string label: ""
-    property bool active: false
-    signal clicked()
-    implicitWidth: Math.max(72, mcLabel.implicitWidth + Style.space(16))
-    implicitHeight: Style.space(26)
-    Rectangle {
-      anchors.fill: parent
-      radius: Style.cornerRadius
-      color: Color.accent
-      opacity: mc.active ? 0.22 : 0.0
-      border.color: mc.active ? Color.accent : Color.popups.border
-      border.width: Math.max(1, Style.space(1))
-    }
-    Text {
-      id: mcLabel
-      anchors.centerIn: parent
-      textFormat: Text.PlainText
-      text: mc.label
-      color: mc.active ? Color.accent : Color.muted
-      font.family: Style.font.family
-      font.pixelSize: Style.font.caption
-    }
-    MouseArea {
-      anchors.fill: parent
-      cursorShape: Qt.PointingHandCursor
-      onClicked: mc.clicked()
-    }
-  }
 }
+

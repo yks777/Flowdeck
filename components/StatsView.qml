@@ -142,7 +142,7 @@ ColumnLayout {
         { id: "yesterday", label: "Yesterday" },
         { id: "all", label: "All" }
       ]
-      delegate: FilterChip {
+      delegate: Chip {
         required property var modelData
         label: modelData.label
         active: root.range === modelData.id
@@ -156,7 +156,7 @@ ColumnLayout {
         { id: "pomo", label: "Pomo" },
         { id: "flow", label: "Flow" }
       ]
-      delegate: FilterChip {
+      delegate: Chip {
         required property var modelData
         label: modelData.label
         active: root.kind === modelData.id
@@ -165,7 +165,7 @@ ColumnLayout {
     }
   }
 
-  SessionHistory { sessions: root.hist }
+  SessionHistory { sessions: root.hist; tickVersion: root.service ? root.service.tickVersion : 0 }
 
   Text {
     textFormat: Text.PlainText
@@ -175,37 +175,5 @@ ColumnLayout {
     font.pixelSize: Style.font.bodySmall
     Layout.alignment: Qt.AlignHCenter
     visible: root.hist.length === 0
-  }
-
-  component FilterChip: Item {
-    id: chip
-    property string label: ""
-    property bool active: false
-    signal clicked()
-    implicitWidth: Math.max(48, chipLabel.implicitWidth + Style.space(16))
-    implicitHeight: Style.space(26)
-
-    Rectangle {
-      anchors.fill: parent
-      radius: Style.cornerRadius
-      color: Color.accent
-      opacity: chip.active ? 0.22 : 0.0
-      border.color: chip.active ? Color.accent : Color.popups.border
-      border.width: Math.max(1, Style.space(1))
-    }
-    Text {
-      id: chipLabel
-      anchors.centerIn: parent
-      textFormat: Text.PlainText
-      text: chip.label
-      color: chip.active ? Color.accent : Color.muted
-      font.family: Style.font.family
-      font.pixelSize: Style.font.caption
-    }
-    MouseArea {
-      anchors.fill: parent
-      cursorShape: Qt.PointingHandCursor
-      onClicked: chip.clicked()
-    }
   }
 }

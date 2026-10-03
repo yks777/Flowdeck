@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import Quickshell.Hyprland
 import "logic/Model.js" as Model
 import "logic/TimerEngine.js" as TimerEngine
 import "logic/StatsEngine.js" as StatsEngine
@@ -669,6 +670,7 @@ Item {
       stateFile.setText(root.serializeState());
     } catch (e) {
       console.warn("Flowdeck: save failed: " + e);
+      root.notify("Flowdeck: save failed", e);
     }
   }
 
@@ -710,7 +712,7 @@ Item {
 
   Process {
     id: backupProc
-    command: ["bash", "-c", "cp -f \"$0\" \"$1\" 2>/dev/null || true", root.stateFilePath, ""]
+    command: [] // replaced in Component.onCompleted with a real backup path
   }
 
   function exportData() {
@@ -798,6 +800,56 @@ Item {
     backupProc.command = ["bash", "-c", "cp -f \"$0\" \"$0.corrupt-" + stamp + "\" 2>/dev/null || true", path];
     exportProc.command = ["bash", "-c", "mkdir -p \"$(dirname \"$0\")\" && cp -f \"$1\" \"$0\" 2>/dev/null || true", Storage.exportPath(Quickshell.env), path];
     stateFile.path = path;
+    root.applyShortcuts();
+  }
+
+  // ============================ global shortcuts ============================
+  // Register `Super+H` with Hyprland so the README promise holds even when
+  // the plugin is installed from a GitHub link. Other Omarchy plugins use
+  // the same `hyprctl eval` + `hl.bind(...)` pattern.
+
+  property var appliedShortcutChords: []
+
+  function shortcutChordOf(id) {
+    return String(id || "").split("+").map(function(k) { return k.trim().toUpperCase() }).join(" + ");
+  }
+
+  function applyShortcuts() {
+    var lines = [];
+    var chords = [];
+    for (var i = 0; i < root.appliedShortcutChords.length; i++)
+      lines.push('pcall(function() hl.unbind("' + root.appliedShortcutChords[i] + '") end)');
+    var binds = [
+      { id: "SUPER + H", cmd: "omarchy-shell yks.flowdeck togglePanel" }
+    ];
+    for (var j = 0; j < binds.length; j++) {
+      if (!binds[j].id) continue;
+      var chord = root.shortcutChordOf(binds[j].id);
+      chords.push(chord);
+      lines.push('pcall(function() hl.unbind("' + chord + '") end)');
+      lines.push('hl.bind("' + chord + '", hl.dsp.exec_cmd("' + binds[j].cmd + '"), { description = "Flowdeck" })');
+    }
+    root.appliedShortcutChords = chords;
+    if (lines.length > 0) Quickshell.execDetached(["hyprctl", "eval", lines.join("; ")]);
+  }
+
+  Connections {
+    target: Hyprland
+    function onRawEvent(event) {
+      if (event && event.name === "configreloaded") shortcutsReloadTimer.restart();
+    }
+  }
+
+  Timer {
+    id: shortcutsReloadTimer
+    interval: 300
+    repeat: false
+    onTriggered: { root.appliedShortcutChords = []; root.applyShortcuts(); }
+  }
+
+  Component.onDestruction: {
+    var lines = root.appliedShortcutChords.map(function(c) { return 'pcall(function() hl.unbind("' + c + '") end)' });
+    if (lines.length > 0) Quickshell.execDetached(["hyprctl", "eval", lines.join("; ")]);
   }
 
   // ============================ plugin IPC ==============================
@@ -822,16 +874,24 @@ Item {
     function pause(): string { root.pauseTimer(); return "ok"; }
     function stop(): string { root.stopTimer(); return "ok"; }
     function finish(kind: string): string {
-      root.finishFlowtime(kind === "break" ? "break" : "focus");
+      var t = root.timer;
+      if (t.mode === "pomodoro" && t.phase === "running") {
+        root.completePomodoro();
+      } else {
+        root.finishFlowtime(kind === "break" ? "break" : "focus");
+      }
       return "ok";
     }
     function interrupt(): string { root.addInterruption(); return "ok"; }
     function skipBreak(): string { root.skipBreak(); return "ok"; }
     function status(): string {
-      return JSON.stringify({
-        mode: root.timer.mode, phase: root.timer.phase,
-        remainingMs: root.timerRemainingMs(), elapsedMs: root.flowElapsedMs()
-      });
+      var t = root.timer;
+      var obj = {
+        mode: t.mode, phase: t.phase,
+        remainingMs: root.timerRemainingMs()
+      };
+      if (t.mode === "flowtime") obj.elapsedMs = root.flowElapsedMs();
+      return JSON.stringify(obj);
     }
     function today(): string { return JSON.stringify(root.todaySummary()); }
     function isOpen(): string {

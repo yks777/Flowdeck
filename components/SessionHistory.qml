@@ -8,6 +8,7 @@ ColumnLayout {
   id: root
 
   property var sessions: []
+  property int tickVersion: 0
 
   spacing: Style.space(4)
   Layout.fillWidth: true
@@ -47,6 +48,7 @@ ColumnLayout {
   }
 
   function timeAgo(ts) {
+    void root.tickVersion;
     var mins = Math.max(0, Math.floor((Date.now() - ts) / 60000));
     if (mins < 1) return "now";
     if (mins < 60) return mins + "m ago";
