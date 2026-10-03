@@ -2,47 +2,22 @@
   "schemaVersion": 1,
   "id": "io.github.flowdeck",
   "name": "Flowdeck",
-  "version": "2.1.0",
+  "version": "1.0.0",
   "author": "Flowdeck contributors",
   "license": "MIT",
-  "description": "Pomodoro and Flowtime focus timers with Kanban boards and focus statistics for the Omarchy bar.",
-  "kinds": ["bar-widget"],
+  "description": "Pomodoro and Flowtime focus timers with an Eisenhower matrix and focus statistics for the Omarchy bar.",
+  "kinds": ["service", "bar-widget", "panel"],
+  "keepLoaded": true,
   "entryPoints": {
-    "barWidget": "BarWidget.qml"
+    "service": "Service.qml",
+    "barWidget": "BarWidget.qml",
+    "panel": "Panel.qml"
   },
   "barWidget": {
     "displayName": "Flowdeck",
-    "description": "Pomodoro / Flowtime focus timers with Kanban and stats.",
+    "description": "Focus timers (Pomodoro / Flowtime) with Eisenhower matrix and stats.",
     "category": "Productivity",
     "allowMultiple": false,
-    "defaultSection": "right",
-    "defaults": {
-      "workSec": 1500,
-      "shortBreakSec": 300,
-      "longBreakSec": 900,
-      "longBreakInterval": 4,
-      "technique": "pomodoro",
-      "flowBreakMode": "traditional",
-      "flowBreakPct": 0.2,
-      "flowBreakMinSec": 300,
-      "flowBreakMaxSec": 900,
-      "notificationsEnabled": true,
-      "soundEnabled": true,
-      "streakMinSec": 1500
-    },
-    "schema": [
-      { "key": "workSec", "type": "int", "label": "Pomodoro work duration (seconds)" },
-      { "key": "shortBreakSec", "type": "int", "label": "Short break (seconds)" },
-      { "key": "longBreakSec", "type": "int", "label": "Long break (seconds)" },
-      { "key": "longBreakInterval", "type": "int", "label": "Work sessions before long break" },
-      { "key": "technique", "type": "string", "label": "Default technique (pomodoro or flowtime)" },
-      { "key": "flowBreakMode", "type": "string", "label": "Flowtime break mode (traditional or proportional)" },
-      { "key": "flowBreakPct", "type": "real", "label": "Flowtime proportional break (0.0-1.0)" },
-      { "key": "flowBreakMinSec", "type": "int", "label": "Flowtime minimum break (seconds)" },
-      { "key": "flowBreakMaxSec", "type": "int", "label": "Flowtime maximum break (seconds)" },
-      { "key": "notificationsEnabled", "type": "bool", "label": "Notify when a pomodoro or break ends" },
-      { "key": "soundEnabled", "type": "bool", "label": "Play finish sound" },
-      { "key": "streakMinSec", "type": "int", "label": "Daily focus seconds counted for streak" }
-    ]
+    "defaultSection": "right"
   }
 }
