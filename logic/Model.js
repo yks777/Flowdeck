@@ -133,7 +133,8 @@ function sanitizeSettings(raw) {
   s.notificationsEnabled = raw.notificationsEnabled !== false;
   s.soundEnabled = raw.soundEnabled !== false;
   var shortcut = String(raw.toggleShortcut || "").trim().toLowerCase();
-  s.toggleShortcut = shortcut.length <= 64 ? shortcut : "";
+  if (!shortcut) shortcut = d.toggleShortcut;
+  s.toggleShortcut = shortcut.length <= 64 ? shortcut : d.toggleShortcut;
   return s;
 }
 
