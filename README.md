@@ -22,10 +22,10 @@ Focus | Matrix | Stats        (tabs — Settings opens via the header gear)
 
 ```bash
 # from this source directory
-DIR=~/.config/omarchy/plugins/io.github.flowdeck
+DIR=~/.config/omarchy/plugins/yks.flowdeck
 mkdir -p "$DIR" && cp -r manifest.json Service.qml BarWidget.qml Panel.qml logic components README.md LICENSE "$DIR"/
 omarchy plugin validate "$DIR"
-omarchy plugin enable io.github.flowdeck
+omarchy plugin enable yks.flowdeck
 ```
 
 The widget lands in the bar's right section; timers keep running because the
@@ -34,27 +34,27 @@ service entry is `keepLoaded`.
 ## Operate
 
 ```bash
-omarchy-shell shell summon io.github.flowdeck '{"view":"matrix"}'
-omarchy-shell shell hide io.github.flowdeck
-omarchy-shell shell toggle io.github.flowdeck '{}'
+omarchy-shell shell summon yks.flowdeck '{"view":"matrix"}'
+omarchy-shell shell hide yks.flowdeck
+omarchy-shell shell toggle yks.flowdeck '{}'
 
 # direct plugin IPC (this is what Super+H calls)
-omarchy-shell io.github.flowdeck togglePanel
-omarchy-shell io.github.flowdeck focus
-omarchy-shell io.github.flowdeck matrix
-omarchy-shell io.github.flowdeck kanban   # legacy alias for matrix
-omarchy-shell io.github.flowdeck stats
-omarchy-shell io.github.flowdeck status
-omarchy-shell io.github.flowdeck today
-omarchy-shell io.github.flowdeck isOpen
-omarchy-shell io.github.flowdeck start
-omarchy-shell io.github.flowdeck pause
-omarchy-shell io.github.flowdeck stop
-omarchy-shell io.github.flowdeck finish focus   # or: finish break
-omarchy-shell io.github.flowdeck interrupt
+omarchy-shell yks.flowdeck togglePanel
+omarchy-shell yks.flowdeck focus
+omarchy-shell yks.flowdeck matrix
+omarchy-shell yks.flowdeck kanban   # legacy alias for matrix
+omarchy-shell yks.flowdeck stats
+omarchy-shell yks.flowdeck status
+omarchy-shell yks.flowdeck today
+omarchy-shell yks.flowdeck isOpen
+omarchy-shell yks.flowdeck start
+omarchy-shell yks.flowdeck pause
+omarchy-shell yks.flowdeck stop
+omarchy-shell yks.flowdeck finish focus   # or: finish break
+omarchy-shell yks.flowdeck interrupt
 ```
 
-`Super+H` is expected to run `omarchy-shell io.github.flowdeck togglePanel`.
+`Super+H` is expected to run `omarchy-shell yks.flowdeck togglePanel`.
 
 ## Matrix mouse usage
 

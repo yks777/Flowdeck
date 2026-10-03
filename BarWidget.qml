@@ -7,14 +7,14 @@ import qs.Ui
 // Left click toggles the panel through the Service (single state owner).
 BarWidget {
   id: root
-  moduleName: "io.github.flowdeck"
+  moduleName: "yks.flowdeck"
 
   readonly property var flowService: {
     if (root.bar && root.bar.shell) {
       var s = null;
       try { s = root.bar.shell.serviceFor(root.moduleName); } catch (e) { s = null; }
       if (s) return s;
-      try { s = root.bar.shell.serviceFor("io.github.flowdeck"); } catch (e2) { s = null; }
+      try { s = root.bar.shell.serviceFor("yks.flowdeck"); } catch (e2) { s = null; }
       return s;
     }
     return null;

@@ -25,7 +25,7 @@ Item {
 
   function pluginId() {
     if (root.manifest && root.manifest.id) return String(root.manifest.id);
-    return "io.github.flowdeck";
+    return "yks.flowdeck";
   }
 
   function open(payloadJson) {

@@ -18,7 +18,7 @@ Item {
   property var manifest: null
   property string omarchyPath: ""
 
-  readonly property string pluginId: "io.github.flowdeck"
+  readonly property string pluginId: "yks.flowdeck"
 
   // ---- canonical state (always replaced, never mutated in place) ----
   property var settings: Model.defaultSettings()
@@ -801,11 +801,11 @@ Item {
   }
 
   // ============================ plugin IPC ==============================
-  // Super+H calls `omarchy-shell io.github.flowdeck togglePanel`; the shell
+  // Super+H calls `omarchy-shell yks.flowdeck togglePanel`; the shell
   // summon/hide/toggle verbs work through the panel entry automatically.
 
   IpcHandler {
-    target: "io.github.flowdeck"
+    target: "yks.flowdeck"
     function togglePanel(): string { root.togglePanel(); return "ok"; }
     function focus(): string { root.openView("focus"); return "ok"; }
     function matrix(): string { root.openView("matrix"); return "ok"; }
