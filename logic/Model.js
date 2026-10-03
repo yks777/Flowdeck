@@ -49,7 +49,9 @@ function defaultSettings() {
     streakMinSec: 25 * 60,
     // Notifications
     notificationsEnabled: true,
-    soundEnabled: true
+    soundEnabled: true,
+    // Shortcuts
+    toggleShortcut: "super+h"
   };
 }
 
@@ -130,6 +132,8 @@ function sanitizeSettings(raw) {
   s.streakMinSec = toInt(raw.streakMinSec, d.streakMinSec, 0, 16 * 3600);
   s.notificationsEnabled = raw.notificationsEnabled !== false;
   s.soundEnabled = raw.soundEnabled !== false;
+  var shortcut = String(raw.toggleShortcut || "").trim().toLowerCase();
+  s.toggleShortcut = shortcut.length <= 64 ? shortcut : "";
   return s;
 }
 

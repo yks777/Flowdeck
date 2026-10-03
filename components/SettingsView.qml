@@ -102,6 +102,25 @@ ColumnLayout {
   }
 
   Section {
+    title: "Shortcuts"
+    ColumnLayout {
+      spacing: Style.space(6)
+      Layout.fillWidth: true
+      RowLayout {
+        spacing: Style.space(4)
+        Layout.fillWidth: true
+        SettingLabel { text: "Open Flowdeck" }
+        Item { Layout.fillWidth: true }
+        Chip { label: "Off"; active: root.service && root.service.settings.toggleShortcut === ""; onClicked: root.service.updateSettings({ toggleShortcut: "" }) }
+        Chip { label: "Super+H"; active: root.service && root.service.settings.toggleShortcut === "super+h"; onClicked: root.service.updateSettings({ toggleShortcut: "super+h" }) }
+        Chip { label: "Super+Shift+H"; active: root.service && root.service.settings.toggleShortcut === "super+shift+h"; onClicked: root.service.updateSettings({ toggleShortcut: "super+shift+h" }) }
+        Chip { label: "Alt+H"; active: root.service && root.service.settings.toggleShortcut === "alt+h"; onClicked: root.service.updateSettings({ toggleShortcut: "alt+h" }) }
+        Chip { label: "Ctrl+Shift+H"; active: root.service && root.service.settings.toggleShortcut === "ctrl+shift+h"; onClicked: root.service.updateSettings({ toggleShortcut: "ctrl+shift+h" }) }
+      }
+    }
+  }
+
+  Section {
     title: "Data"
     ColumnLayout {
       spacing: Style.space(6)

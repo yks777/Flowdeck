@@ -513,6 +513,7 @@ Item {
     var next = {};
     for (var k in root.settings) next[k] = root.settings[k];
     for (var p in patch) next[p] = patch[p];
+    var prevShortcut = root.settings.toggleShortcut;
     root.settings = Model.sanitizeSettings(next);
     // Keep an idle timer aligned with the persisted choice so the Focus tab
     // and the Super+H shortcut start the chosen technique after a reload.
@@ -524,6 +525,7 @@ Item {
         root.timer = c;
       }
     }
+    if (root.settings.toggleShortcut !== prevShortcut) root.applyShortcuts();
     root.bump();
     root.saveSoon();
   }
@@ -820,7 +822,7 @@ Item {
     for (var i = 0; i < root.appliedShortcutChords.length; i++)
       lines.push('pcall(function() hl.unbind("' + root.appliedShortcutChords[i] + '") end)');
     var binds = [
-      { id: "SUPER + H", cmd: "omarchy-shell yks.flowdeck togglePanel" }
+      { id: root.settings.toggleShortcut, cmd: "omarchy-shell yks.flowdeck togglePanel" }
     ];
     for (var j = 0; j < binds.length; j++) {
       if (!binds[j].id) continue;
