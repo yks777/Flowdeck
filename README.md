@@ -12,23 +12,26 @@ native to the Omarchy bar.
 - **Settings**: timer durations, break policy, streak goal, notifications,
   export / import / reset — behind the gear icon.
 
-## Layout
+State is persisted in versioned JSON at
+`$XDG_DATA_HOME/flowdeck/state.json` (`~/.local/share/flowdeck/state.json`).
+Timers are timestamp-based (`deadlineMs - Date.now()`), so they survive panel
+close, shell reload, and suspend/resume.
 
-```
-Focus | Matrix | Stats        (tabs — Settings opens via the header gear)
-```
+## Preview
 
-## Install
+![Flowdeck preview](images/preview.png)
+
+## Instalação
 
 ```bash
-# GitHub install (interativo: quando perguntar a seção, escolha right)
+# Install via Omarchy plugin CLI (interactive: when asked for section, choose right)
 omarchy plugin add https://github.com/yks777/Flowdeck.git --enable
 
-# restart shell so it can load
+# Restart shell so it can load
 omarchy restart shell; sleep 6; omarchy-shell io.github.yks777.flowdeck ping
 ```
 
-Non-interactive (sem pergunta):
+Non-interactive (sem prompt):
 
 ```bash
 omarchy plugin add https://github.com/yks777/Flowdeck.git --enable --yes
@@ -36,29 +39,52 @@ omarchy plugin enable io.github.yks777.flowdeck --section right
 omarchy restart shell; sleep 6; omarchy-shell io.github.yks777.flowdeck ping
 ```
 
-> Não use só `add ... --enable --yes` e pare aí: com `--yes` o instalador
+> Não use apenas `add ... --enable --yes` e pare aí: com `--yes` o instalador
 > pula a pergunta de placement e o widget não entra no `bar.layout`
-> (só service/panel habilitam — atalho e popup funcionam, mas sem relógio).
+> (somente service/panel habilitam — atalho e popup funcionam, mas sem relógio).
 > Se o ícone sumir, repare com:
 > `omarchy plugin enable io.github.yks777.flowdeck --section right`
 > (se já existir entrada em `plugins[]` sem entrada na barra, remova a
 > entrada de `plugins[]` antes ou o enable vira no-op) e reinicie a shell.
 
-The widget lives in the bar's right section; timers keep running because the
-service entry is `keepLoaded`.
+O widget fica na seção direita da barra; os timers continuam rodando porque a
+entrada de serviço usa `keepLoaded`.
 
-## Operate
+## Uninstall
+
+```bash
+omarchy plugin disable io.github.yks777.flowdeck
+omarchy plugin remove io.github.yks777.flowdeck
+omarchy restart shell
+```
+
+## Como funciona
+
+### Atalhos
+
+| Ação | Atalho / entrada |
+| --- | --- |
+| Alternar painel (abrir/fechar) | `Super+H` (padrão) |
+| Fechar painel | `Esc` |
+| Abrir / alternar painel | Clique esquerdo no widget da barra |
+| Abrir estatísticas | Clique direito no widget da barra |
+| Iniciar / pausar / retomar timer | Clique do meio no widget da barra |
+
+Atalhos globais alternativos configuráveis: `Super+Shift+H`, `Alt+H`,
+`Ctrl+Shift+H`.
+
+### Operação via shell
 
 ```bash
 omarchy-shell shell summon io.github.yks777.flowdeck '{"view":"matrix"}'
 omarchy-shell shell hide io.github.yks777.flowdeck
 omarchy-shell shell toggle io.github.yks777.flowdeck '{}'
 
-# direct plugin IPC (this is what Super+H calls)
+# IPC direto do plugin (mesmo que Super+H executa)
 omarchy-shell io.github.yks777.flowdeck togglePanel
 omarchy-shell io.github.yks777.flowdeck focus
 omarchy-shell io.github.yks777.flowdeck matrix
-omarchy-shell io.github.yks777.flowdeck kanban   # legacy alias for matrix
+omarchy-shell io.github.yks777.flowdeck kanban   # alias legado para matrix
 omarchy-shell io.github.yks777.flowdeck stats
 omarchy-shell io.github.yks777.flowdeck status
 omarchy-shell io.github.yks777.flowdeck today
@@ -66,45 +92,57 @@ omarchy-shell io.github.yks777.flowdeck isOpen
 omarchy-shell io.github.yks777.flowdeck start
 omarchy-shell io.github.yks777.flowdeck pause
 omarchy-shell io.github.yks777.flowdeck stop
-omarchy-shell io.github.yks777.flowdeck finish focus   # or: finish break
+omarchy-shell io.github.yks777.flowdeck finish focus   # ou: finish break
 omarchy-shell io.github.yks777.flowdeck interrupt
 ```
 
-`Super+H` is expected to run `omarchy-shell io.github.yks777.flowdeck togglePanel`.
+### Mouse na Matrix
 
-## Matrix mouse usage
+Clique em um card para abrir suas ações:
 
-Click a card to open its actions:
+- **Focus** — define a tarefa como ativa e inicia um timer (Pomodoro ou
+  Flowtime, escolhido em Settings → Focus). Com um timer rodando, pede
+  confirmação antes de trocar.
+- **Done** — completa o card (marca conclusão, remove dos quadrantes).
+  Reabra em `Completed`, que tem busca própria.
+- **Edit** — renomeia inline (Enter salva, Esc cancela).
+- **Delete** — pede confirmação.
 
-- **Focus** — sets the task active and starts a timer (Pomodoro or
-  Flowtime, chosen in Settings → Focus). With a timer running it asks
-  before switching.
-- **Done** — completes the card (stamps completion, hides it from the
-  quadrants). Reopen it from `Completed`, which has its own search.
-- **Edit** — renames inline (Enter saves, Esc cancels).
-- **Delete** — asks first.
+Mova cards entre quadrantes com **arrastar**: segure o botão esquerdo em um
+card (uma cópia fantasma segue o cursor), arraste sobre o quadrante alvo (ele
+realça) e solte. Soltar fora de qualquer quadrante cancela. Quadrantes
+rolam com a roda do mouse, arrastando espaços vazios, ou com a barra de
+rolagem fina. `+ Add task` (em cada quadrante) cria inline.
 
-Move cards between quadrants by **press, hold and drag**: hold the left
-button on a card (a ghost copy follows the cursor), drag it over the
-target quadrant (it highlights) and release. Dropping outside any quadrant
-cancels. Quadrants scroll with the mouse wheel, by dragging empty gaps,
-or with the thin scrollbar. `+ Add task` (each quadrant) composes inline.
+## Dependencies
 
-`Esc` closes the panel. The only global shortcut is `Super+H` (toggle).
+**QML / Quickshell:**
+- `QtQuick`
+- `QtQuick.Layouts`
+- `QtQuick.Controls`
+- `Quickshell`
+- `Quickshell.Io`
+- `Quickshell.Hyprland`
+- `Quickshell.Wayland`
+- `qs.Commons`
+- `qs.Ui`
 
-## Data
+**Módulos JS internos:**
+- `logic/Model.js`
+- `logic/TimerEngine.js`
+- `logic/StatsEngine.js`
+- `logic/Storage.js`
 
-State lives outside the plugin, versioned JSON:
+**Comandos de shell usados:**
+- `omarchy-notification-send`
+- `canberra-gtk-play`
+- `hyprctl`
+- `omarchy`
+- `bash`, `mkdir`, `cp`
 
-```
-$XDG_DATA_HOME/flowdeck/state.json   (~/.local/share/flowdeck/state.json)
-```
-
-Corrupt files are preserved as `state.json.corrupt-<ts>` and the plugin
-starts from a safe blank state. Timers are timestamp-based
-(`deadlineMs - Date.now()`), so they survive panel close, shell reload and
-suspend/resume.
+Não há dependências externas de `npm`, `pip` ou `apt` além das APIs da
+plataforma Omarchy / Quickshell.
 
 ## License
 
-MIT — see LICENSE.
+MIT — see [LICENSE](LICENSE).
