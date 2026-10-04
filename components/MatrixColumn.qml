@@ -34,7 +34,7 @@ ColumnLayout {
 
     RowLayout {
       spacing: Style.space(6)
-      Layout.fillWidth: true
+      Layout.alignment: Qt.AlignHCenter
 
       Text {
         textFormat: Text.PlainText
@@ -60,6 +60,8 @@ ColumnLayout {
       font.family: Style.font.family
       font.pixelSize: Style.font.caption
       visible: root.subtitle !== ""
+      horizontalAlignment: Text.AlignHCenter
+      Layout.fillWidth: true
     }
   }
 

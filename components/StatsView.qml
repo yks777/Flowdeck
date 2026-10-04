@@ -48,6 +48,8 @@ ColumnLayout {
     font.family: Style.font.family
     font.pixelSize: Style.font.caption
     font.letterSpacing: 1
+    horizontalAlignment: Text.AlignHCenter
+    Layout.fillWidth: true
   }
 
   GridLayout {
@@ -71,6 +73,8 @@ ColumnLayout {
     font.family: Style.font.family
     font.pixelSize: Style.font.caption
     font.letterSpacing: 1
+    horizontalAlignment: Text.AlignHCenter
+    Layout.fillWidth: true
   }
 
   ColumnLayout {
@@ -130,38 +134,52 @@ ColumnLayout {
     font.family: Style.font.family
     font.pixelSize: Style.font.caption
     font.letterSpacing: 1
+    horizontalAlignment: Text.AlignHCenter
+    Layout.fillWidth: true
   }
 
-  RowLayout {
+  ColumnLayout {
     spacing: Style.space(4)
     Layout.fillWidth: true
 
-    Repeater {
-      model: [
-        { id: "today", label: "Today" },
-        { id: "yesterday", label: "Yesterday" },
-        { id: "all", label: "All" }
-      ]
-      delegate: Chip {
-        required property var modelData
-        label: modelData.label
-        active: root.range === modelData.id
-        onClicked: root.range = modelData.id
+    RowLayout {
+      spacing: Style.space(4)
+      Layout.fillWidth: true
+      Item { Layout.fillWidth: true }
+      Repeater {
+        model: [
+          { id: "today", label: "Today" },
+          { id: "yesterday", label: "Yesterday" },
+          { id: "all", label: "All" }
+        ]
+        delegate: Chip {
+          required property var modelData
+          label: modelData.label
+          active: root.range === modelData.id
+          onClicked: root.range = modelData.id
+        }
       }
+      Item { Layout.fillWidth: true }
     }
-    Item { Layout.fillWidth: true }
-    Repeater {
-      model: [
-        { id: "both", label: "Both" },
-        { id: "pomo", label: "Pomo" },
-        { id: "flow", label: "Flow" }
-      ]
-      delegate: Chip {
-        required property var modelData
-        label: modelData.label
-        active: root.kind === modelData.id
-        onClicked: root.kind = modelData.id
+
+    RowLayout {
+      spacing: Style.space(4)
+      Layout.fillWidth: true
+      Item { Layout.fillWidth: true }
+      Repeater {
+        model: [
+          { id: "both", label: "Both" },
+          { id: "pomo", label: "Pomo" },
+          { id: "flow", label: "Flow" }
+        ]
+        delegate: Chip {
+          required property var modelData
+          label: modelData.label
+          active: root.kind === modelData.id
+          onClicked: root.kind = modelData.id
+        }
       }
+      Item { Layout.fillWidth: true }
     }
   }
 

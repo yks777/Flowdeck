@@ -7,35 +7,42 @@ import qs.Commons
 import qs.Ui
 import "components"
 
-// Flowdeck panel: true Omarchy panel entry point.
+// Flowdeck panel: entry point "panel" do manifest, carregado pelo
+// panel-loader da shell (padrão menu, como omarchy.menu). A shell injeta
+// shell/manifest/service/omarchyPath (declarados abaixo) e entrega o
+// payload via open(payloadJson): summon "… '{"view":"matrix"}'".
+// NÃO recriar Loader deste arquivo no BarWidget — era o painel fantasma.
 Panel {
   id: root
   moduleName: "io.github.yks777.flowdeck"
   manageIpc: false
 
+  // Injetados pela shell no onLoaded do panel-loader.
+  property var shell: null
+  property var manifest: null
+  property var service: null
+  property string omarchyPath: ""
+
   property var anchorItem: null
   property var hostWidget: null
+  // Identidade que a barra usa para o dot de painel aberto e Tab-switch.
+  readonly property var barIdentity: hostWidget || root
 
-  function open() {
-    root.controller.show()
+  // Sem barra viva no painel standalone (o loader não injeta `bar`), o
+  // KeyboardPanel precisa de `anchorItem` + `bar` não-nulos para sair do
+  // canto: `centerOnBar` centraliza em X na tela; `barPos "bottom"` prende
+  // o Y no topo e o `gap` reativo desce o card para logo abaixo da barra.
+  // O shim cobre os membros que o KeyboardPanel lê no caminho do open
+  // (position/barSize/activePopout/requestPopout/releasePopout).
+  readonly property QtObject barShim: QtObject {
+    property string position: "bottom"
+    property int barSize: 0
+    property var activePopout: null
+    function requestPopout(owner) {}
+    function releasePopout(owner) {}
   }
 
-  function close() {
-    root.controller.hide()
-  }
-
-  function toggle() {
-    if (root.opened) root.close()
-    else root.open()
-  }
-
-  function switchPanel(direction) {
-    if (root.bar && typeof root.bar.switchPanelFrom === "function")
-      return root.bar.switchPanelFrom(root.hostWidget || root, direction)
-    return false
-  }
-
-  property bool opened: false
+  // `opened` vem da base (panelController.open) — nunca redeclarar.
   property string currentView: "focus"
   property string returnView: "focus"
 
@@ -44,7 +51,9 @@ Panel {
     return "io.github.yks777.flowdeck";
   }
 
-  function openView(payloadJson) {
+  // Chamado pela shell: open() sem arg (botão da barra) ou
+  // open('{"view":"matrix|stats|focus"}') via summon.
+  function open(payloadJson) {
     var payload = {};
     try { payload = JSON.parse(payloadJson || "{}") || {}; } catch (e) {}
     var view = String(payload.view || "");
@@ -53,16 +62,31 @@ Panel {
       try { pending = String(root.service.consumePendingView() || ""); } catch (e2) {}
       if (view === "") view = pending;
     }
-    if (view === "kanban") view = "matrix";
-    if (view === "focus" || view === "matrix" || view === "stats") root.currentView = view;
-    root.opened = true;
+    if (view === "kanban") view = "matrix"; // alias legado
+    if (view === "focus" || view === "matrix" || view === "stats" || view === "settings") root.currentView = view;
+    root.controller.show();
     Qt.callLater(function() {
       if (root.opened) keyCatcher.forceActiveFocus();
     });
   }
 
+  function close() {
+    root.controller.hide();
+  }
+
+  function toggle() {
+    if (root.opened) root.close();
+    else root.open();
+  }
+
   function dismiss() {
-    root.opened = false;
+    root.close();
+  }
+
+  function switchPanel(direction) {
+    if (root.bar && typeof root.bar.switchPanelFrom === "function")
+      return root.bar.switchPanelFrom(root.barIdentity, direction);
+    return false;
   }
 
   function goSettings() {
@@ -98,13 +122,30 @@ Panel {
 
   KeyboardPanel {
     id: panel
-    anchorItem: root.anchorItem
-    owner: root.hostWidget || root
-    bar: root.bar
+    anchorItem: centerAnchor
+    owner: root.barIdentity
+    bar: root.barShim
     open: root.opened
+    centerOnBar: true
+    // Centro real da tela nos dois eixos (X vem do centerOnBar). Sem âncora
+    // viva na barra, barH = altura da própria janela (fullscreen); o Y da
+    // fórmula (screenH - barH - C - gap) é resolvido com este gap reativo
+    // para y = screenH/2 - C/2. Termos livres de loop: availableCardHeight
+    // é o único consumidor de `gap` no KeyboardPanel e não é mais usado
+    // (a altura abaixo é manual).
+    gap: panel.screenH / 2 - panel.barH - (cardContent.implicitHeight + panel.verticalContentInset) / 2
     focusTarget: keyCatcher
-    contentWidth: panel.fittedContentWidth(Style.space(400))
-    contentHeight: panel.fittedContentHeight(content.implicitHeight)
+    contentWidth: panel.fittedContentWidth(root.cardWidth)
+    // Altura manual = conteúdo inteiro (sem corte): o availableCardHeight do
+    // KeyboardPanel fica envenenado pelo barH fullscreen e cortaria o card.
+    // O min() impede overflow em telas baixas. screenH não depende de `gap`.
+    contentHeight: Math.min(cardContent.implicitHeight + panel.verticalContentInset,
+      Math.max(120, panel.screenH - (Style.bar.sizeHorizontal + Style.gapsOut * 2)))
+
+    Item {
+      id: centerAnchor
+      anchors.fill: parent
+    }
 
     PanelKeyCatcher {
       id: keyCatcher
@@ -112,8 +153,8 @@ Panel {
       onCloseRequested: root.dismiss()
       onTabRequested: function(direction) { root.switchPanel(direction) }
 
-      Column {
-        id: content
+      ColumnLayout {
+        id: cardContent
         width: parent.width
         spacing: Style.space(8)
 
@@ -134,8 +175,8 @@ Panel {
         Item {
           id: focusHost
           property int contentH: focusView.implicitHeight
-          width: parent.width
-          height: root.contentHeight
+          Layout.fillWidth: true
+          Layout.preferredHeight: root.contentHeight
           visible: root.currentView === "focus"
 
           FocusView {
@@ -146,8 +187,8 @@ Panel {
         }
 
         Item {
-          width: parent.width
-          height: root.contentHeight
+          Layout.fillWidth: true
+          Layout.preferredHeight: root.contentHeight
           visible: root.currentView === "matrix"
 
           MatrixView {
@@ -157,8 +198,8 @@ Panel {
         }
 
         Item {
-          width: parent.width
-          height: root.contentHeight
+          Layout.fillWidth: true
+          Layout.preferredHeight: root.contentHeight
           visible: root.currentView === "stats"
 
           Flickable {
@@ -177,8 +218,8 @@ Panel {
         }
 
         Item {
-          width: parent.width
-          height: root.contentHeight
+          Layout.fillWidth: true
+          Layout.preferredHeight: root.contentHeight
           visible: root.currentView === "settings"
 
           Flickable {

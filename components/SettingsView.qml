@@ -14,7 +14,6 @@ ColumnLayout {
 
   spacing: Style.space(12)
   Layout.fillWidth: true
-  padding: Style.space(16)
 
   RowLayout {
     spacing: Style.space(10)
@@ -118,7 +117,7 @@ ColumnLayout {
       }
       RowLayout {
         spacing: Style.space(8)
-        Layout.fillWidth: true
+        Layout.alignment: Qt.AlignHCenter
         Chip { label: "Alt+H"; active: root.service && root.service.settings.toggleShortcut === "alt+h"; onClicked: root.service.updateSettings({ toggleShortcut: "alt+h" }) }
         Chip { label: "Ctrl+Shift+H"; active: root.service && root.service.settings.toggleShortcut === "ctrl+shift+h"; onClicked: root.service.updateSettings({ toggleShortcut: "ctrl+shift+h" }) }
       }
@@ -137,11 +136,12 @@ ColumnLayout {
         font.family: Style.font.family
         font.pixelSize: Style.font.caption
         wrapMode: Text.Wrap
+        horizontalAlignment: Text.AlignHCenter
         Layout.fillWidth: true
       }
       RowLayout {
         spacing: Style.space(8)
-        Layout.fillWidth: true
+        Layout.alignment: Qt.AlignHCenter
         FlowButton { text: "Export"; onClicked: { if (root.service) root.service.exportData(); } }
         FlowButton { text: "Import"; onClicked: { if (root.service) root.service.importData(); } }
         FlowButton {
@@ -163,6 +163,7 @@ ColumnLayout {
         font.family: Style.font.family
         font.pixelSize: Style.font.caption
         wrapMode: Text.Wrap
+        horizontalAlignment: Text.AlignHCenter
         Layout.fillWidth: true
       }
     }
@@ -175,7 +176,8 @@ ColumnLayout {
     property string title: ""
     spacing: Style.space(8)
     Layout.fillWidth: true
-    padding: Style.space(12)
+    Layout.leftMargin: Style.space(4)
+    Layout.rightMargin: Style.space(4)
     Text {
       textFormat: Text.PlainText
       text: sec.title.toUpperCase()
@@ -183,6 +185,8 @@ ColumnLayout {
       font.family: Style.font.family
       font.pixelSize: Style.font.caption
       font.letterSpacing: 1
+      horizontalAlignment: Text.AlignHCenter
+      Layout.fillWidth: true
     }
     Rectangle {
       height: Math.max(1, Style.space(1))

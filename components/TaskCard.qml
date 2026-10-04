@@ -164,7 +164,7 @@ Rectangle {
 
       RowLayout {
         spacing: Style.space(4)
-        Layout.fillWidth: true
+        Layout.alignment: Qt.AlignHCenter
 
         MiniAction {
           label: root.confirmingSwitch ? "Switch?" : "Focus"
@@ -186,7 +186,7 @@ Rectangle {
 
       RowLayout {
         spacing: Style.space(4)
-        Layout.fillWidth: true
+        Layout.alignment: Qt.AlignHCenter
 
         MiniAction {
           label: "Edit"
