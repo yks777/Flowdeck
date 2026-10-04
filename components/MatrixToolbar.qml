@@ -36,9 +36,4 @@ RowLayout {
     onClicked: root.openCompleted()
   }
 
-  FlowButton {
-    text: "+ Task"
-    primary: true
-    onClicked: root.addTaskRequested()
-  }
 }
