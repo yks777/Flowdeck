@@ -321,8 +321,8 @@ function formatMS(totalSeconds) {
   return p(m) + ":" + p(s);
 }
 
-// Adaptive clock for the bar/panel timers: MM:SS under one hour
-// (01:20), HH:MM:SS at/over one hour (01:20:20). Never 00:00:00.
+// Adaptive clock for the bar/panel timers: SS under one minute (05),
+// MM:SS under one hour (01:20), HH:MM:SS at/over one hour (01:20:20).
 function formatClock(totalSeconds) {
   totalSeconds = Math.max(0, Math.floor(totalSeconds));
   var h = Math.floor(totalSeconds / 3600);
@@ -330,7 +330,8 @@ function formatClock(totalSeconds) {
   var s = totalSeconds % 60;
   function p(n) { return (n < 10 ? "0" : "") + n; }
   if (h > 0) return p(h) + ":" + p(m) + ":" + p(s);
-  return p(m) + ":" + p(s);
+  if (m > 0) return p(m) + ":" + p(s);
+  return p(s);
 }
 
 function formatDur(totalSeconds) {
