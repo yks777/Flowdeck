@@ -21,7 +21,7 @@ close, shell reload, and suspend/resume.
 
 ![Flowdeck preview](images/preview.png)
 
-## Instalação
+## Installation
 
 ```bash
 # Install via Omarchy plugin CLI (interactive: when asked for section, choose right)
@@ -31,7 +31,7 @@ omarchy plugin add https://github.com/yks777/Flowdeck.git --enable
 omarchy restart shell; sleep 6; omarchy-shell io.github.yks777.flowdeck ping
 ```
 
-Non-interactive (sem prompt):
+Non-interactive:
 
 ```bash
 omarchy plugin add https://github.com/yks777/Flowdeck.git --enable --yes
@@ -39,16 +39,16 @@ omarchy plugin enable io.github.yks777.flowdeck --section right
 omarchy restart shell; sleep 6; omarchy-shell io.github.yks777.flowdeck ping
 ```
 
-> Não use apenas `add ... --enable --yes` e pare aí: com `--yes` o instalador
-> pula a pergunta de placement e o widget não entra no `bar.layout`
-> (somente service/panel habilitam — atalho e popup funcionam, mas sem relógio).
-> Se o ícone sumir, repare com:
+> Do not use only `add ... --enable --yes` and stop there: with `--yes` the installer
+> skips the placement question and the widget does not enter `bar.layout`
+> (only service/panel are enabled — shortcut and popup work, but without the clock).
+> If the icon disappears, fix it with:
 > `omarchy plugin enable io.github.yks777.flowdeck --section right`
-> (se já existir entrada em `plugins[]` sem entrada na barra, remova a
-> entrada de `plugins[]` antes ou o enable vira no-op) e reinicie a shell.
+> (if an entry already exists in `plugins[]` without a bar entry, remove the
+> `plugins[]` entry first or enable becomes a no-op) and restart the shell.
 
-O widget fica na seção direita da barra; os timers continuam rodando porque a
-entrada de serviço usa `keepLoaded`.
+The widget lives in the bar's right section; timers keep running because the
+service entry uses `keepLoaded`.
 
 ## Uninstall
 
@@ -58,33 +58,33 @@ omarchy plugin remove io.github.yks777.flowdeck
 omarchy restart shell
 ```
 
-## Como funciona
+## How it works
 
-### Atalhos
+### Shortcuts
 
-| Ação | Atalho / entrada |
+| Action | Shortcut / input |
 | --- | --- |
-| Alternar painel (abrir/fechar) | `Super+H` (padrão) |
-| Fechar painel | `Esc` |
-| Abrir / alternar painel | Clique esquerdo no widget da barra |
-| Abrir estatísticas | Clique direito no widget da barra |
-| Iniciar / pausar / retomar timer | Clique do meio no widget da barra |
+| Toggle panel (open/close) | `Super+H` (default) |
+| Close panel | `Esc` |
+| Open / toggle panel | Left-click on the bar widget |
+| Open stats | Right-click on the bar widget |
+| Start / pause / resume timer | Middle-click on the bar widget |
 
-Atalhos globais alternativos configuráveis: `Super+Shift+H`, `Alt+H`,
+Configurable alternative global shortcuts: `Super+Shift+H`, `Alt+H`,
 `Ctrl+Shift+H`.
 
-### Operação via shell
+### Shell operation
 
 ```bash
 omarchy-shell shell summon io.github.yks777.flowdeck '{"view":"matrix"}'
 omarchy-shell shell hide io.github.yks777.flowdeck
 omarchy-shell shell toggle io.github.yks777.flowdeck '{}'
 
-# IPC direto do plugin (mesmo que Super+H executa)
+# Direct plugin IPC (same as what Super+H runs)
 omarchy-shell io.github.yks777.flowdeck togglePanel
 omarchy-shell io.github.yks777.flowdeck focus
 omarchy-shell io.github.yks777.flowdeck matrix
-omarchy-shell io.github.yks777.flowdeck kanban   # alias legado para matrix
+omarchy-shell io.github.yks777.flowdeck kanban   # legacy alias for matrix
 omarchy-shell io.github.yks777.flowdeck stats
 omarchy-shell io.github.yks777.flowdeck status
 omarchy-shell io.github.yks777.flowdeck today
@@ -92,27 +92,27 @@ omarchy-shell io.github.yks777.flowdeck isOpen
 omarchy-shell io.github.yks777.flowdeck start
 omarchy-shell io.github.yks777.flowdeck pause
 omarchy-shell io.github.yks777.flowdeck stop
-omarchy-shell io.github.yks777.flowdeck finish focus   # ou: finish break
+omarchy-shell io.github.yks777.flowdeck finish focus   # or: finish break
 omarchy-shell io.github.yks777.flowdeck interrupt
 ```
 
-### Mouse na Matrix
+### Matrix mouse usage
 
-Clique em um card para abrir suas ações:
+Click a card to open its actions:
 
-- **Focus** — define a tarefa como ativa e inicia um timer (Pomodoro ou
-  Flowtime, escolhido em Settings → Focus). Com um timer rodando, pede
-  confirmação antes de trocar.
-- **Done** — completa o card (marca conclusão, remove dos quadrantes).
-  Reabra em `Completed`, que tem busca própria.
-- **Edit** — renomeia inline (Enter salva, Esc cancela).
-- **Delete** — pede confirmação.
+- **Focus** — sets the task active and starts a timer (Pomodoro or
+  Flowtime, chosen in Settings → Focus). With a timer running it asks
+  before switching.
+- **Done** — completes the card (stamps completion, hides it from the
+  quadrants). Reopen it from `Completed`, which has its own search.
+- **Edit** — renames inline (Enter saves, Esc cancels).
+- **Delete** — asks first.
 
-Mova cards entre quadrantes com **arrastar**: segure o botão esquerdo em um
-card (uma cópia fantasma segue o cursor), arraste sobre o quadrante alvo (ele
-realça) e solte. Soltar fora de qualquer quadrante cancela. Quadrantes
-rolam com a roda do mouse, arrastando espaços vazios, ou com a barra de
-rolagem fina. `+ Add task` (em cada quadrante) cria inline.
+Move cards between quadrants by **drag**: hold the left button on a card
+(a ghost copy follows the cursor), drag it over the target quadrant (it
+highlights) and release. Dropping outside any quadrant cancels. Quadrants
+scroll with the mouse wheel, by dragging empty gaps, or with the thin
+scrollbar. `+ Add task` (each quadrant) composes inline.
 
 ## Dependencies
 
@@ -127,21 +127,20 @@ rolagem fina. `+ Add task` (em cada quadrante) cria inline.
 - `qs.Commons`
 - `qs.Ui`
 
-**Módulos JS internos:**
+**Internal JS modules:**
 - `logic/Model.js`
 - `logic/TimerEngine.js`
 - `logic/StatsEngine.js`
 - `logic/Storage.js`
 
-**Comandos de shell usados:**
+**Shell commands used:**
 - `omarchy-notification-send`
 - `canberra-gtk-play`
 - `hyprctl`
 - `omarchy`
 - `bash`, `mkdir`, `cp`
 
-Não há dependências externas de `npm`, `pip` ou `apt` além das APIs da
-plataforma Omarchy / Quickshell.
+There are no external `npm`, `pip`, or `apt` dependencies beyond the Omarchy / Quickshell platform APIs.
 
 ## License
 
