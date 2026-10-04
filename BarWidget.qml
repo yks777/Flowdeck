@@ -30,7 +30,9 @@ BarWidget {
     onTriggered: root.nowTick++
   }
 
-  // Contagem viva HH:MM:SS (exigência do usuário). Parado = ícone de relógio.
+  // Contagem viva adaptativa (MM:SS < 1h, HH:MM:SS >= 1h) com relógio
+  // à esquerda. Parado = só o ícone. Semântica mantida: Pomodoro = restante,
+  // Flowtime = decorrido (wall-clock no Service).
   readonly property string displayText: {
     var svc = root.flowService;
     if (!svc || !svc.timer) return "";
@@ -47,7 +49,7 @@ BarWidget {
     } else {
       return "";
     }
-    return Model.formatHMS(Math.floor(ms / 1000));
+    return " " + Model.formatClock(Math.floor(ms / 1000));
   }
 
   readonly property string tooltipText: {

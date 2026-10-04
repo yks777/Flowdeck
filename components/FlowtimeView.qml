@@ -17,10 +17,10 @@ ColumnLayout {
   readonly property bool live: root.phase === "running" || root.phase === "paused"
 
   function elapsedText() {
-    if (!root.service) return Model.formatHMS(0);
+    if (!root.service) return Model.formatClock(0);
     void root.service.tickVersion;
-    if (root.live) return Model.formatHMS(Math.floor(root.service.flowElapsedMs() / 1000));
-    return Model.formatHMS(0);
+    if (root.live) return Model.formatClock(Math.floor(root.service.flowElapsedMs() / 1000));
+    return Model.formatClock(0);
   }
 
   function breakHint() {

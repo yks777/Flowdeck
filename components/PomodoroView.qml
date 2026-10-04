@@ -17,13 +17,13 @@ ColumnLayout {
   readonly property bool isBreak: root.phase === "break"
 
   function timeText() {
-    if (!root.service) return Model.formatHMS(25 * 60);
+    if (!root.service) return Model.formatClock(25 * 60);
     void root.service.tickVersion;
     if (root.phase === "running" || root.phase === "paused" || root.phase === "break") {
       var rem = Math.floor(root.service.timerRemainingMs() / 1000);
-      return Model.formatHMS(rem);
+      return Model.formatClock(rem);
     }
-    return Model.formatHMS(root.service.settings.focusSec);
+    return Model.formatClock(root.service.settings.focusSec);
   }
 
   function stateLabel() {
