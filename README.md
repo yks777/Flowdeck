@@ -21,14 +21,30 @@ Focus | Matrix | Stats        (tabs — Settings opens via the header gear)
 ## Install
 
 ```bash
-# one-shot GitHub install
-omarchy plugin add https://github.com/yks777/Flowdeck.git --enable --yes
+# GitHub install (interativo: quando perguntar a seção, escolha right)
+omarchy plugin add https://github.com/yks777/Flowdeck.git --enable
 
 # restart shell so it can load
 omarchy restart shell; sleep 6; omarchy-shell io.github.yks777.flowdeck ping
 ```
 
-The widget lands in the bar's right section; timers keep running because the
+Non-interactive (sem pergunta):
+
+```bash
+omarchy plugin add https://github.com/yks777/Flowdeck.git --enable --yes
+omarchy plugin enable io.github.yks777.flowdeck --section right
+omarchy restart shell; sleep 6; omarchy-shell io.github.yks777.flowdeck ping
+```
+
+> Não use só `add ... --enable --yes` e pare aí: com `--yes` o instalador
+> pula a pergunta de placement e o widget não entra no `bar.layout`
+> (só service/panel habilitam — atalho e popup funcionam, mas sem relógio).
+> Se o ícone sumir, repare com:
+> `omarchy plugin enable io.github.yks777.flowdeck --section right`
+> (se já existir entrada em `plugins[]` sem entrada na barra, remova a
+> entrada de `plugins[]` antes ou o enable vira no-op) e reinicie a shell.
+
+The widget lives in the bar's right section; timers keep running because the
 service entry is `keepLoaded`.
 
 ## Operate
