@@ -2,78 +2,68 @@ import QtQuick
 import Quickshell
 import qs.Commons
 import qs.Ui
-import "../logic/Model.js" as Model
 
-// Flowdeck bar widget: a clock that reflects timer state.
-// Left click toggles the panel through the Service (single state owner).
 BarWidget {
   id: root
-  moduleName: "yks.flowdeck"
+  moduleName: "io.github.yks777.flowdeck"
 
   readonly property var flowService: {
     if (root.bar && root.bar.shell) {
       var s = null;
       try { s = root.bar.shell.serviceFor(root.moduleName); } catch (e) { s = null; }
       if (s) return s;
-      try { s = root.bar.shell.serviceFor("yks.flowdeck"); } catch (e2) { s = null; }
+      try { s = root.bar.shell.serviceFor("io.github.yks777.flowdeck"); } catch (e2) { s = null; }
       return s;
     }
     return null;
   }
 
-  // Binds the 1 Hz service tick so the label refreshes while running.
-  readonly property int tick: flowService ? flowService.tickVersion : 0
-  readonly property int rev: flowService ? flowService.revision : 0
+  readonly property bool opened: panelLoader.item
+    ? panelLoader.item.opened === true
+    : false
 
-  readonly property string mode: flowService ? String(flowService.timer.mode) : "idle"
-  readonly property string phase: flowService ? String(flowService.timer.phase) : "stopped"
-
-  // Nerd Font clock glyph (fa-clock-o): the button that opens the popup.
-  readonly property string clockGlyph: ""
-
-  function clockText() {
-    if (!root.flowService) return root.clockGlyph;
-    var parts = [];
-    void root.tick; void root.rev;
-    if (root.phase === "running" || root.phase === "paused" || root.phase === "break") {
-      if (root.mode === "pomodoro" || root.phase === "break") {
-        var rem = Math.max(0, Math.floor(root.flowService.timerRemainingMs() / 1000));
-        parts.push(Model.formatMS(rem));
-      } else if (root.mode === "flowtime") {
-        var el = Math.max(0, Math.floor(root.flowService.flowElapsedMs() / 1000));
-        parts.push(formatShort(el));
-      }
-    }
-    return parts.length > 0 ? root.clockGlyph + " " + parts.join(" ") : root.clockGlyph;
+  function open() {
+    if (panelLoader.item) panelLoader.item.open()
   }
 
-  function formatShort(totalSeconds) {
-    var m = Math.floor(totalSeconds / 60);
-    if (m < 60) return m + "m";
-    var h = Math.floor(m / 60);
-    return h + "h " + (m % 60) + "m";
+  function close() {
+    if (panelLoader.item) panelLoader.item.close()
   }
 
-  readonly property bool active: root.phase === "running" || root.phase === "break"
+  function toggle() {
+    if (panelLoader.item) panelLoader.item.toggle()
+  }
 
-  implicitWidth: label.implicitWidth + Style.space(16)
+  function injectPanel() {
+    if (!panelLoader.item) return
+    panelLoader.item.bar = root.bar
+    panelLoader.item.hostWidget = root
+  }
+
+  implicitWidth: button.implicitWidth
   implicitHeight: barSize
 
-  Text {
-    id: label
-    anchors.centerIn: parent
-    textFormat: Text.PlainText
-    text: root.clockText()
-    color: root.active ? (root.bar ? root.bar.barForeground : Color.foreground) : (root.bar ? Qt.darker(root.bar.barForeground, 1.25) : Color.muted)
-    font.family: root.bar ? root.bar.fontFamily : Style.font.family
-    font.pixelSize: Style.font.body
+  onBarChanged: injectPanel()
+
+  Loader {
+    id: panelLoader
+    active: true
+    source: Qt.resolvedUrl("Panel.qml")
+    visible: false
+    onLoaded: {
+      root.injectPanel()
+      Qt.callLater(root.injectPanel)
+    }
   }
 
-  MouseArea {
+  WidgetButton {
+    id: button
     anchors.fill: parent
-    acceptedButtons: Qt.LeftButton
-    onClicked: function(mouse) {
-      if (mouse.button === Qt.LeftButton && root.flowService) root.flowService.togglePanel();
+    bar: root.bar
+    text: root.flowService ? root.clockText() : ""
+    tooltipText: "Open Flowdeck"
+    onPressed: function(buttonCode) {
+      if (buttonCode === Qt.LeftButton) root.toggle()
     }
   }
 }

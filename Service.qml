@@ -19,7 +19,7 @@ Item {
   property var manifest: null
   property string omarchyPath: ""
 
-  readonly property string pluginId: "yks.flowdeck"
+  readonly property string pluginId: "io.github.yks777.flowdeck"
 
   // ---- canonical state (always replaced, never mutated in place) ----
   property var settings: Model.defaultSettings()
@@ -822,7 +822,7 @@ Item {
     for (var i = 0; i < root.appliedShortcutChords.length; i++)
       lines.push('pcall(function() hl.unbind("' + root.appliedShortcutChords[i] + '") end)');
     var binds = [
-      { id: root.settings.toggleShortcut, cmd: "omarchy-shell yks.flowdeck togglePanel" }
+      { id: root.settings.toggleShortcut, cmd: "omarchy-shell io.github.yks777.flowdeck togglePanel" }
     ];
     for (var j = 0; j < binds.length; j++) {
       if (!binds[j].id) continue;
@@ -855,11 +855,11 @@ Item {
   }
 
   // ============================ plugin IPC ==============================
-  // Super+H calls `omarchy-shell yks.flowdeck togglePanel`; the shell
+  // Super+H calls `omarchy-shell io.github.yks777.flowdeck togglePanel`; the shell
   // summon/hide/toggle verbs work through the panel entry automatically.
 
   IpcHandler {
-    target: "yks.flowdeck"
+    target: "io.github.yks777.flowdeck"
     function togglePanel(): string { root.togglePanel(); return "ok"; }
     function focus(): string { root.openView("focus"); return "ok"; }
     function matrix(): string { root.openView("matrix"); return "ok"; }
