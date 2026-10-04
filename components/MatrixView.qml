@@ -37,7 +37,6 @@ Item {
     MatrixToolbar {
       id: toolbar
       service: root.service
-      onAddTaskRequested: { col0.editorOpen = true; }
       onOpenCompleted: {
         root.completedQuery = "";
         root.completedOpen = true;

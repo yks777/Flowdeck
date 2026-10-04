@@ -88,8 +88,7 @@ Move cards between quadrants by **press, hold and drag**: hold the left
 button on a card (a ghost copy follows the cursor), drag it over the
 target quadrant (it highlights) and release. Dropping outside any quadrant
 cancels. Quadrants scroll with the mouse wheel, by dragging empty gaps,
-or with the thin scrollbar. `+ Task` (toolbar) and `+ Add task` (each
-quadrant) compose inline.
+or with the thin scrollbar. `+ Add task` (each quadrant) composes inline.
 
 `Esc` closes the panel. The only global shortcut is `Super+H` (toggle).
 

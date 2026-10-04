@@ -2,13 +2,13 @@ import QtQuick
 import QtQuick.Layouts
 import qs.Commons
 
-// MATRIX   [ Completed (n) ] [ + Task ] — single board, no search here.
-// Completed tasks live in a popup (with its own search) opened from MatrixView.
+// MATRIX   [ Completed (n) ] — single board, no search here.
+// Tasks are created per quadrant (+ Add task); completed tasks live in a
+// popup (with its own search) opened from MatrixView.
 RowLayout {
   id: root
 
   property var service: null
-  signal addTaskRequested()
   signal openCompleted()
 
   spacing: Style.space(8)
